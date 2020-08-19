@@ -71,7 +71,7 @@ function getFinals(data) {
     });
     return allFinals;
 };
-//console.log(getFinals(fifaData));
+console.log(getFinals(fifaData));
 
 
 
@@ -85,7 +85,7 @@ function getYears(cbFinals, data) {
     });
     return years;
 };
-// console.log(getYears(getFinals, fifaData));
+console.log(getYears(getFinals, fifaData));
 
 
 
@@ -104,14 +104,15 @@ function getWinners(cbFinals, data) {
         } else if (item["Home Team Goals"] < item["Away Team Goals"]) {
             winner = item["Away Team Name"];
         } else {
-            winner = "it was complicated who";
+           winner = item["Win conditions"].split(" ", 1);
+           
         }
         return winner;
     });
     return winners;
 }
 
-// console.log(getWinners(getFinals, fifaData));
+console.log(getWinners(getFinals, fifaData));
 
 
 
@@ -135,7 +136,7 @@ function getWinnersByYear(cbFinals,cbWinners, cbYears, data) {
     return winnerStatement;
 }
 
-// console.log(getWinnersByYear(getFinals, getWinners, getYears, fifaData));
+console.log(getWinnersByYear(getFinals, getWinners, getYears, fifaData));
 
 
 
@@ -165,13 +166,25 @@ function getAverageGoals(data) {
 Hint: Investigate your data to find "team initials"!
 Hint: use `.reduce` */
 
-function getCountryWins(/* code here */) {
+function getCountryWins(data, teamInitials) {
+    const myTeamPlays = data.filter(function(item){
+        return item["Stage"] === "Final" && (item["Home Team Initials"] === teamInitials || item["Away Team Initials"] === teamInitials);
+    });
+    const myTeamWins = myTeamPlays.reduce(function(accum, item){
+        if (item["Home Team Initials"] === teamInitials && item["Home Team Goals"] > item["Away Team Goals"]) {
+            return accum + 1;
+        } else if (item["Away Team Initials"] === teamInitials && item["Away Team Goals"] > item["Home Team Goals"]) {
+            return accum + 1;
+        } else {
+            return accum;
+        }
+    },0);
+    return myTeamWins;
+}
 
-    /* code here */
+console.log(getCountryWins(fifaData,"BRA"));
 
-};
 
-getCountryWins();
 
 
 /* Stretch 3: Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
@@ -196,3 +209,8 @@ function badDefense(/* code here */) {
 badDefense();
 
 /* If you still have time, use the space below to work on any stretch goals of your chosing as listed in the README file. */
+
+// - [X] Create a function that takes country initials as a parameter and returns their total number of World Cup appearances.
+// - [x] Account for ties in your 'finals' data set
+// - [ ] Create a function that takes country initials as a parameter and determines how many goals that country has scored in World Cup games since 1930.
+// - [ ] Use `.map` to format country names into `<h1>` HTML headers.
